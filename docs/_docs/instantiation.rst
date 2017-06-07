@@ -2,22 +2,23 @@ Instantiation
 =============
 
 There are several different methods available to create a new instance of Pendulum.
-First there is a constructor. It accepts the same parameters as the standard class.
+
+First there is the ``create()`` helper.
+It allows you to provide as many or as few arguments as you want and will provide default values for all others.
 
 .. code-block:: python
 
-    from pendulum import Pendulum
+    import pendulum
 
-    dt = Pendulum(2015, 2, 5, tzinfo='America/Vancouver')
+    dt = pendulum.create(2015, 2, 5, tz='America/Vancouver')
     isinstance(dt, datetime)
     True
 
     dt = Pendulum.now(-5)
 
-You'll notice above that the timezone (2nd) parameter was passed as a string and an integer
-rather than a ``tzinfo`` instance. All timezone parameters have been augmented
-so you can pass a ``tzinfo`` instance, string or integer offset to GMT
-and the timezone will be created for you.
+``create()`` will default any null parameter to the current date for the date part
+and to ``00:00:00`` for time. The ``tz`` defaults to the ``UTC`` timezone
+and otherwise can be a ``Timezone`` instance or simply a string timezone value.
 
 .. note::
 
@@ -47,7 +48,8 @@ This is again shown in the next example which also introduces the ``now()`` func
 
 To accompany ``now()``, a few other static instantiation helpers exist to create widely known instances.
 The only thing to really notice here is that ``today()``, ``tomorrow()`` and ``yesterday()``,
-besides behaving as expected, all accept a timezone parameter and each has their time value set to ``00:00:00``.
+besides behaving as expected, all accept a timezone parameter
+and each has their time value set to ``00:00:00``.
 
 .. code-block:: python
 
@@ -67,24 +69,9 @@ besides behaving as expected, all accept a timezone parameter and each has their
     print(yesterday)
     '2016-06-27T00:00:00-05:00'
 
-The next helper is ``create()`` which allows you to provide
-as many or as few arguments as you want and will provide default values for all others.
-
-.. code-block:: python
-
-    pendulum.create(year, month, day, hour, minute, second, microsecond, tz)
-
-``create()`` will default any null parameter to the current date for the date part and to ``00:00:00`` for time.
-As before, the ``tz`` defaults to the ``UTC`` timezone and otherwise can be a ``Timezone`` instance
-or simply a string timezone value.
-
-.. code-block:: python
-
-    pendulum.from_format(time, format, tz)
-
-``from_format()`` is mostly a wrapper for the base Python function ``datetime.strptime()``.
-The difference being the addition the ``tz`` argument that can be a ``tzinfo`` instance or a string timezone value
-(defaults to ``UTC``).
+The next helper, ``from_format()``, is mostly a wrapper for the base Python function ``datetime.strptime()``.
+The difference being the addition of the ``tz`` argument
+that can be a ``tzinfo`` instance or a string timezone value (defaults to ``UTC``).
 
 .. code-block:: python
 
@@ -96,8 +83,8 @@ The difference being the addition the ``tz`` argument that can be a ``tzinfo`` i
     # Using strptime is also possible (the timezone will be UTC)
     pendulum.strptime('1975-05-21 22', '%Y-%m-%d %H').isoformat()
 
-The final ``create`` function is for working with unix timestamps.
-``from_timestamp()`` will create a ``Pendulum`` instance equal to the given timestamp
+The final helper is for working with unix timestamps.
+``from_timestamp()`` will create a ``DateTime`` instance equal to the given timestamp
 and will set the timezone as well or default it to ``UTC``.
 
 .. code-block:: python
@@ -112,19 +99,8 @@ and will set the timezone as well or default it to ``UTC``.
     pendulum.fromtimestamp(-1).to_datetime_string()
     '1969-12-31 23:59:59'
 
-You can also create a ``copy()`` of an existing ``Pendulum`` instance.
-As expected the date, time and timezone values are all copied to the new instance.
-
-.. code-block:: python
-
-    dt = pendulum.now()
-    print(dt.diff(dt.copy().add(years=1)).in_years())
-    1
-
-    # dt was unchanged and still holds the value of pendulum.now()
-
 Finally, if you find yourself inheriting a ``datetime`` instance,
-you can create a ``Pendulum`` instance via the ``instance()`` function.
+you can create a ``DateTime`` instance via the ``instance()`` function.
 
 .. code-block:: python
 
@@ -136,7 +112,7 @@ you can create a ``Pendulum`` instance via the ``instance()`` function.
 Parsing
 -------
 
-You can also instantiate ``Pendulum`` instances by passing a string to the ``parse()`` method.
+You can also instantiate ``DateTime`` instances by passing a string to the ``parse()`` method.
 
 .. code-block:: python
 
